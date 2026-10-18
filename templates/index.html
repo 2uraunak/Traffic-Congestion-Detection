@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smart Traffic Congestion Detection</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0b0f19; color: #f8fafc; margin: 0; padding: 30px; }
+        .container { max-width: 1050px; margin: 0 auto; }
+        h1 { color: #818cf8; margin-bottom: 6px; }
+        .subtitle { color: #94a3b8; margin-bottom: 24px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .card { background: #111827; border: 1px solid #1f2937; border-radius: 14px; padding: 24px; }
+        .upload-box { border: 2px dashed #374151; border-radius: 10px; padding: 35px; text-align: center; background: #0f172a; margin-bottom: 16px; }
+        button { background: #6366f1; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; width: 100%; cursor: pointer; }
+        button:hover { background: #4f46e5; }
+        .cong-box { background: #1e293b; border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+        .cong-title { font-size: 24px; font-weight: 900; }
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
+        .stat-card { background: #0f172a; border-radius: 8px; padding: 10px; text-align: center; }
+        .stat-val { font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚦 Smart Traffic Congestion Detection (YOLOv8)</h1>
+        <p class="subtitle">Computer Vision Vehicle Census & Adaptive Intersection Signal Management</p>
+
+        <div class="grid">
+            <div class="card">
+                <h2>CCTV Intersection Snapshot</h2>
+                <form action="/detect" method="POST" enctype="multipart/form-data">
+                    <div class="upload-box">
+                        <input type="file" name="cctv_frame" accept="image/*" required style="color:#94a3b8;">
+                    </div>
+                    <button type="submit">📹 Execute Multi-Vehicle Census</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Traffic Operations Telemetry</h2>
+                {% if detected %}
+                <div class="cong-box" style="border-left: 5px solid {{ status_color }};">
+                    <div class="cong-title" style="color: {{ status_color }};">{{ level }}</div>
+                    <div style="color: #cbd5e1; font-weight: bold; margin-top: 6px;">Density: {{ density }} Vehicles/min | Avg Speed: {{ speed }}</div>
+                </div>
+
+                <h3>Vehicle Census Breakdown</h3>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div style="font-size:11px; color:#94a3b8;">CARS</div>
+                        <div class="stat-val" style="color:#38bdf8;">{{ counts.Cars }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div style="font-size:11px; color:#94a3b8;">BUSES</div>
+                        <div class="stat-val" style="color:#f59e0b;">{{ counts.Buses }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div style="font-size:11px; color:#94a3b8;">TRUCKS</div>
+                        <div class="stat-val" style="color:#ef4444;">{{ counts.Trucks }}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div style="font-size:11px; color:#94a3b8;">2-WHEELERS</div>
+                        <div class="stat-val" style="color:#10b981;">{{ counts['Two-Wheelers'] }}</div>
+                    </div>
+                </div>
+
+                <div style="background:#1e1b4b; border-radius:8px; padding:14px; font-size:13px; color:#cbd5e1; line-height:1.5;">
+                    <strong style="color:#818cf8;">Adaptive Signal Control Recommendation:</strong><br>{{ recommendation }}
+                </div>
+                {% else %}
+                <p style="color:#64748b; text-align:center; padding: 60px 0;">Upload an intersection camera frame to count vehicles and compute signal delays.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>
